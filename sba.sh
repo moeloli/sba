@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # 当前脚本版本号
-VERSION='1.1.2 (2025.01.28)'
+VERSION='1.1.3 (2025.03.18)'
 
 # 各变量默认值
 GH_PROXY='https://ghproxy.lvedong.eu.org/'
@@ -21,8 +21,8 @@ mkdir -p $TEMP_DIR
 
 E[0]="Language:\n 1. English (default) \n 2. 简体中文"
 C[0]="${E[0]}"
-E[1]="1. Add server-side time synchronization configuration; 2. Replace some CDNs."
-C[1]="1. 添加服务端时间同步配置; 2. 替换某些 CDN"
+E[1]="Compatible with Sing-box 1.12.0-alpha.18+."
+C[1]="适配 Sing-box 1.12.0-alpha.18+"
 E[2]="Project to create Argo tunnels and Sing-box specifically for VPS, detailed:[https://github.com/fscarmen/sba]\n Features:\n\t • Allows the creation of Argo tunnels via Token, Json and ad hoc methods. User can easily obtain the json at https://fscarmen.cloudflare.now.cc .\n\t • Extremely fast installation method, saving users time.\n\t • Support system: Ubuntu, Debian, CentOS, Alpine and Arch Linux 3.\n\t • Support architecture: AMD,ARM and s390x\n"
 C[2]="本项目专为 VPS 添加 Argo 隧道及 Sing-Box,详细说明: [https://github.com/fscarmen/sba]\n 脚本特点:\n\t • 允许通过 Token, Json 及 临时方式来创建 Argo 隧道,用户通过以下网站轻松获取 json: https://fscarmen.cloudflare.now.cc\n\t • 极速安装方式,大大节省用户时间\n\t • 智能判断操作系统: Ubuntu 、Debian 、CentOS 、Alpine 和 Arch Linux,请务必选择 LTS 系统\n\t • 支持硬件结构类型: AMD 和 ARM\n"
 E[3]="Input errors up to 5 times.The script is aborted."
@@ -145,8 +145,8 @@ E[61]="Enable multiplexing"
 C[61]="可开启多路复用"
 E[62]="Create shortcut [ sb ] successfully."
 C[62]="创建快捷 [ sb ] 指令成功!"
-E[63]="The full template can be found at:\n https://t.me/ztvps/100\n https://github.com/chika0801/sing-box-examples/tree/main/Tun"
-C[63]="完整模板可参照:\n https://t.me/ztvps/100\n https://github.com/chika0801/sing-box-examples/tree/main/Tun"
+E[63]="The full template can be found at:\n https://github.com/chika0801/sing-box-examples/tree/main/Tun"
+C[63]="完整模板可参照:\n https://github.com/chika0801/sing-box-examples/tree/main/Tun"
 E[64]="Install TCP brutal"
 C[64]="安装 TCP brutal"
 E[65]="No server ip, script exits. Feedback:[https://github.com/fscarmen/sba/issues]"
@@ -264,7 +264,7 @@ check_install() {
   {
     local VERSION_LATEST=$(wget --no-check-certificate -qO- ${GH_PROXY}https://api.github.com/repos/SagerNet/sing-box/releases | awk -F '["v-]' '/tag_name/{print $5}' | sort -Vr | sed -n '1p')
     local SING_BOX_LATEST=$(wget --no-check-certificate -qO- ${GH_PROXY}https://api.github.com/repos/SagerNet/sing-box/releases | awk -F '["v]' -v var="tag_name.*$VERSION" '$0 ~ var {print $5; exit}')
-    SING_BOX_LATEST=${SING_BOX_LATEST:-'1.11.0-beta.15'}
+    SING_BOX_LATEST=${SING_BOX_LATEST:-'1.12.0-alpha.18'}
     wget --no-check-certificate -c $TEMP_DIR/sing-box.tar.gz ${GH_PROXY}https://github.com/SagerNet/sing-box/releases/download/v$SING_BOX_LATEST/sing-box-$SING_BOX_LATEST-linux-$SING_BOX_ARCH.tar.gz -qO- | tar xz -C $TEMP_DIR sing-box-$SING_BOX_LATEST-linux-$SING_BOX_ARCH/sing-box
     mv $TEMP_DIR/sing-box-$SING_BOX_LATEST-linux-$SING_BOX_ARCH/sing-box $TEMP_DIR >/dev/null 2>&1
     wget --no-check-certificate --continue -qO $TEMP_DIR/jq ${GH_PROXY}https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-$JQ_ARCH >/dev/null 2>&1 && chmod +x $TEMP_DIR/jq >/dev/null 2>&1
@@ -753,6 +753,13 @@ WantedBy=multi-user.target"
             "enabled": true,
             "path": "$WORK_DIR/cache.db"
         }
+    },
+    "dns":{
+        "servers":[
+            {
+                "type":"local"
+            }
+        ]
     },
     "ntp": {
         "enabled": true,
